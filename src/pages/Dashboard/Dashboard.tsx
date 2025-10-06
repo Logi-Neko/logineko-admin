@@ -1,20 +1,61 @@
-import React from 'react';
-import { Card, Row, Col, Table, Tag } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Row, Col, Table, Tag, Spin, message } from 'antd';
 import { Column } from '@ant-design/charts';
 import { 
   UserOutlined, 
   CrownOutlined, 
-  DollarOutlined, 
+  DollarOutlined,
+  QuestionCircleOutlined, 
   // TrendingUpOutlined 
 } from '@ant-design/icons';
-import { mockMonthlyRevenue, calculateDashboardStats, mockUsers } from '../../data/mockData';
+import type { AdminStatDTO } from '../../types';
+import { apiService } from '../../services/api';
 
 const Dashboard: React.FC = () => {
-  const stats = calculateDashboardStats();
+  const [loading, setLoading] = useState(true);
+  const [adminStats, setAdminStats] = useState<AdminStatDTO | null>(null);
+  const [selectedYear, setSelectedYear] = useState(2025);
 
-  const chartData = mockMonthlyRevenue.map(item => ({
-    month: item.month,
-    revenue: item.revenue / 1000, // Convert to thousands
+  useEffect(() => {
+    fetchAdminStats();
+  }, [selectedYear]);
+
+  const fetchAdminStats = async () => {
+    try {
+      setLoading(true);
+      const response = await apiService.getAdminStatistics(selectedYear);
+      if (response.status === 200 || response.data) {
+        setAdminStats(response.data);
+      } else {
+        message.error('Không thể tải dữ liệu thống kê');
+      }
+    } catch (error) {
+      console.error('Error fetching admin stats:', error);
+      message.error('Lỗi khi tải dữ liệu thống kê');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (!adminStats) {
+    return (
+      <div className="text-center py-8">
+        <p>Không có dữ liệu thống kê</p>
+      </div>
+    );
+  }
+
+  const chartData = adminStats.monthData.map(item => ({
+    month: `Tháng ${item.month}`,
+    revenue: item.revenue / 1000000, // Convert to millions
   }));
 
   const chartConfig = {
@@ -26,7 +67,7 @@ const Dashboard: React.FC = () => {
     },
     label: {
       position: 'top' as const,
-      formatter: (datum: any) => datum.revenue > 0 ? `${datum.revenue}K` : '',
+      formatter: (datum: any) => datum.revenue > 0 ? `${datum.revenue.toFixed(1)}M` : '',
     },
     meta: {
       revenue: {
@@ -40,6 +81,7 @@ const Dashboard: React.FC = () => {
       title: 'Tháng',
       dataIndex: 'month',
       key: 'month',
+      render: (value: number) => `Tháng ${value}`,
     },
     {
       title: 'Doanh Thu',
@@ -49,76 +91,26 @@ const Dashboard: React.FC = () => {
     },
     {
       title: 'Người Dùng Mới',
-      dataIndex: 'users',
-      key: 'users',
+      dataIndex: 'newUsers',
+      key: 'newUsers',
       render: (value: number) => value > 0 ? value.toLocaleString() : '0',
     },
     {
       title: 'Premium Mới',
-      dataIndex: 'premiumUsers',
-      key: 'premiumUsers',
+      dataIndex: 'newPremiumUsers',
+      key: 'newPremiumUsers',
       render: (value: number) => value > 0 ? value.toLocaleString() : '0',
     },
     {
       title: 'Tăng Trưởng',
-      dataIndex: 'growth',
-      key: 'growth',
+      dataIndex: 'monthOverMonthGrowth',
+      key: 'monthOverMonthGrowth',
       render: (value: number) => {
         if (value === 0) return <Tag color="default">0%</Tag>;
         const color = value > 15 ? 'green' : value > 10 ? 'blue' : 'orange';
-        return <Tag color={color}>+{value}%</Tag>;
+        const sign = value > 0 ? '+' : '';
+        return <Tag color={color}>{sign}{value.toFixed(1)}%</Tag>;
       },
-    },
-    {
-      title: 'Trạng Thái',
-      key: 'status',
-      render: (record: any) => {
-        if (record.revenue === 0) return <Tag color="red">Tạm</Tag>;
-        return <Tag color="blue">Tốt</Tag>;
-      },
-    },
-  ];
-
-  const userTableColumns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
-      title: 'Tên',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-    },
-    {
-      title: 'Gói',
-      dataIndex: 'package',
-      key: 'package',
-      render: (packageType: string) => (
-        <Tag color={packageType === 'Premium' ? 'gold' : 'blue'}>
-          {packageType}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Trạng Thái',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status: string) => (
-        <Tag color={status === 'hoạt động' ? 'green' : 'red'}>
-          {status}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Ngày Tạo',
-      dataIndex: 'registrationDate',
-      key: 'registrationDate',
     },
   ];
 
@@ -152,8 +144,7 @@ const Dashboard: React.FC = () => {
         <Col xs={24} sm={12} lg={6}>
           <StatCard
             title="Tổng Người Dùng"
-            value="12,847"
-            subtitle="Tổng số người dùng"
+            value={adminStats.totalUsers.toLocaleString()}
             icon={<UserOutlined />}
             color="#1890ff"
           />
@@ -161,17 +152,15 @@ const Dashboard: React.FC = () => {
         <Col xs={24} sm={12} lg={6}>
           <StatCard
             title="Người Dùng Premium"
-            value="3,234"
-            subtitle="Số người dùng trả phí"
+            value={adminStats.totalPremiumUsers.toLocaleString()}
             icon={<CrownOutlined />}
             color="#52c41a"
           />
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <StatCard
-            title="Doanh Thu"
-            value="1.2B"
-            subtitle="Tổng doanh thu tháng"
+            title="Tổng Doanh Thu"
+            value={`${(adminStats.totalRevenueInYear / 1000000000).toFixed(1)}B`}
             icon={<DollarOutlined />}
             color="#faad14"
           />
@@ -179,9 +168,8 @@ const Dashboard: React.FC = () => {
         <Col xs={24} sm={12} lg={6}>
           <StatCard
             title="Tổng Cầu Hỏi"
-            value="8,567"
-            subtitle="Tăng trưởng"
-            icon={<DollarOutlined />}
+            value={adminStats.totalQuestions.toLocaleString()}
+            icon={<QuestionCircleOutlined />}
             color="#722ed1"
           />
         </Col>
@@ -191,35 +179,43 @@ const Dashboard: React.FC = () => {
         <Col span={24}>
           <Card 
             title="Doanh Thu Theo Tháng" 
-            extra={<span className="text-gray-500">2025</span>}
+            extra={<span className="text-gray-500">{adminStats.year}</span>}
           >
             <div className="mb-6">
               <Row gutter={[16, 16]}>
                 <Col span={6}>
                   <div className="text-center">
-                    <p className="m-0 text-gray-500 text-sm">TỔNG DOANH THU 2025</p>
-                    <h3 className="my-1 text-blue-500 text-lg font-semibold">8.5B VNĐ</h3>
+                    <p className="m-0 text-gray-500 text-sm">TỔNG DOANH THU {adminStats.year}</p>
+                    <h3 className="my-1 text-blue-500 text-lg font-semibold">
+                      {(adminStats.totalRevenueInYear / 1000000000).toFixed(1)}B VNĐ
+                    </h3>
                     <p className="m-0 text-xs text-gray-500">Tổng doanh thu năm</p>
                   </div>
                 </Col>
                 <Col span={6}>
                   <div className="text-center">
                     <p className="m-0 text-gray-500 text-sm">TRUNG BÌNH/THÁNG</p>
-                    <h3 className="my-1 text-green-500 text-lg font-semibold">1.2B VNĐ</h3>
+                    <h3 className="my-1 text-green-500 text-lg font-semibold">
+                      {(adminStats.averageRevenueInMonth / 1000000).toFixed(1)}M VNĐ
+                    </h3>
                     <p className="m-0 text-xs text-gray-500">Trung bình mỗi tháng</p>
                   </div>
                 </Col>
                 <Col span={6}>
                   <div className="text-center">
                     <p className="m-0 text-gray-500 text-sm">THÁNG CAO NHẤT</p>
-                    <h3 className="my-1 text-yellow-500 text-lg font-semibold">Tháng 12</h3>
+                    <h3 className="my-1 text-yellow-500 text-lg font-semibold">
+                      Tháng {adminStats.monthWithHighestRevenue}
+                    </h3>
                     <p className="m-0 text-xs text-gray-500">Tháng có doanh thu cao nhất</p>
                   </div>
                 </Col>
                 <Col span={6}>
                   <div className="text-center">
                     <p className="m-0 text-gray-500 text-sm">TĂNG TRƯỞNG</p>
-                    <h3 className="my-1 text-purple-600 text-lg font-semibold">+18.5%</h3>
+                    <h3 className="my-1 text-purple-600 text-lg font-semibold">
+                      {adminStats.yearOverYearGrowth > 0 ? '+' : ''}{adminStats.yearOverYearGrowth}%
+                    </h3>
                     <p className="m-0 text-xs text-gray-500">So với năm trước</p>
                   </div>
                 </Col>
@@ -229,32 +225,11 @@ const Dashboard: React.FC = () => {
             <div className="mt-6">
               <Table
                 columns={monthlyTableColumns}
-                dataSource={mockMonthlyRevenue.map((item, index) => ({ ...item, key: index }))}
+                dataSource={adminStats.monthData.map((item, index) => ({ ...item, key: index }))}
                 pagination={false}
                 size="middle"
               />
             </div>
-          </Card>
-        </Col>
-      </Row>
-
-      <Row gutter={[24, 24]} className="mt-6">
-        <Col span={24}>
-          <Card 
-            title="Người Dùng Mới Nhất" 
-            extra={
-              <div className="flex gap-4">
-                <span className="text-blue-500 cursor-pointer hover:text-blue-600">Xuất Excel</span>
-                <span className="text-green-500 cursor-pointer hover:text-green-600">Thêm Người Dùng</span>
-              </div>
-            }
-          >
-            <Table
-              columns={userTableColumns}
-              dataSource={mockUsers.slice(0, 4).map(user => ({ ...user, key: user.id }))}
-              pagination={false}
-              size="middle"
-            />
           </Card>
         </Col>
       </Row>

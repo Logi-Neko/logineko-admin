@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Avatar, Badge, Dropdown } from 'antd';
+import { Layout, Menu, Avatar, Badge, Dropdown, message } from 'antd';
 import {
   DashboardOutlined,
   UserOutlined,
@@ -10,8 +10,11 @@ import {
   QuestionCircleOutlined,
   BarChartOutlined,
   SettingOutlined,
+  LogoutOutlined,
+  UserSwitchOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 const { Header, Sider, Content } = Layout;
 
@@ -19,6 +22,18 @@ const MainLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
+
+  const handleMenuClick = ({ key }: { key: string }) => {
+    if (key === 'logout') {
+      logout();
+      message.success('Đăng xuất thành công!');
+      navigate('/login');
+    } else if (key === 'profile') {
+      // Handle profile navigation
+      message.info('Chức năng đang phát triển');
+    }
+  };
 
   const menuItems = [
     {
@@ -27,7 +42,7 @@ const MainLayout: React.FC = () => {
       label: 'TỔNG QUAN',
       children: [
         {
-          key: '/',
+          key: '/dashboard',
           icon: <DashboardOutlined />,
           label: 'Dashboard',
         },
@@ -83,15 +98,21 @@ const MainLayout: React.FC = () => {
     {
       key: 'profile',
       label: 'Thông tin cá nhân',
+      icon: <UserSwitchOutlined />,
+    },
+    {
+      type: 'divider',
     },
     {
       key: 'logout',
       label: 'Đăng xuất',
+      icon: <LogoutOutlined />,
+      danger: true,
     },
   ];
 
   return (
-    <Layout className="min-h-screen">
+    <Layout className="!min-h-screen">
       <Sider
         trigger={null}
         collapsible
@@ -146,7 +167,7 @@ const MainLayout: React.FC = () => {
               <p className="m-0 text-gray-500 text-sm">Chào mừng quay trở lại Admin</p>
             </div>
           </div>
-          <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+          <Dropdown menu={{ items: userMenuItems as any, onClick: handleMenuClick }} placement="bottomRight">
             <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-3 py-2 rounded-lg">
               <Avatar className="bg-blue-500" size={32}>A</Avatar>
               <div>
@@ -156,7 +177,7 @@ const MainLayout: React.FC = () => {
             </div>
           </Dropdown>
         </Header>
-        <Content className="m-0 p-6 bg-gray-50 min-h-[calc(100vh-64px)]">
+        <Content className="m-0 p-6 bg-gray-50">
           <Outlet />
         </Content>
       </Layout>
