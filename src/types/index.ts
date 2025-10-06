@@ -96,3 +96,62 @@ export interface AdminStatDTO {
   yearOverYearGrowth: number;
   monthData: MonthData[];
 }
+
+// Course Management Types
+export interface CourseDTO {
+  id: number;
+  name: string;
+  description: string;
+  thumbnailUrl: string;
+  thumbnailPublicId: string;
+  totalLesson: number;
+  isPremium: boolean;
+  isActive: boolean;
+  price: number;
+  star: number;
+  createdAt: string; // LocalDateTime as ISO string
+  updatedAt: string; // LocalDateTime as ISO string
+}
+
+export interface LessonDTO {
+  id: number;
+  name: string;
+  description: string;
+  order: number;
+  minAge: number;
+  maxAge: number;
+  difficultyLevel: number;
+  thumbnailUrl: string;
+  duration: number;
+  totalVideo: number;
+  star: number;
+  isPremium: boolean;
+  isActive: boolean;
+  createdAt: string; // LocalDateTime as ISO string
+  updatedAt: string; // LocalDateTime as ISO string
+}
+
+export interface VideoQuestionDTO {
+  id: number;
+  question: string;
+  optionA: string;
+  optionB: string;
+  optionC: string;
+  optionD: string;
+  answer: string;
+}
+
+export interface VideoDTO {
+  id: number;
+  title: string;
+  videoUrl: string;
+  videoPublicId: string;
+  thumbnailUrl: string;
+  thumbnailPublicId: string;
+  duration: number;
+  order: number;
+  isActive: boolean;
+  createdAt: string; // LocalDateTime as ISO string
+  updatedAt: string; // LocalDateTime as ISO string
+  videoQuestion: VideoQuestionDTO;
+}

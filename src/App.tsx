@@ -8,6 +8,7 @@ import MainLayout from './components/Layout/MainLayout';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Users from './pages/Users/Users';
 import Premium from './pages/Premium/Premium';
+import Courses from './pages/Courses/Courses';
 import Login from './pages/Login/Login';
 import './App.css';
 
@@ -30,6 +31,7 @@ const App: React.FC = () => {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="users" element={<Users />} />
               <Route path="premium" element={<Premium />} />
+              <Route path="courses" element={<Courses />} />
             </Route>
             
             {/* Catch all route */}
