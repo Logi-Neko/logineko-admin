@@ -113,6 +113,40 @@ export interface CourseDTO {
   updatedAt: string; // LocalDateTime as ISO string
 }
 
+export interface CourseRequest {
+  name: string;
+  description: string;
+  isPremium?: boolean;
+  isActive?: boolean;
+  price?: number;
+}
+
+export interface LessonRequest {
+  courseId: number;
+  name: string;
+  description: string;
+  order: number;
+  minAge: number;
+  maxAge: number;
+  difficultyLevel: number;
+  duration: number;
+  isPremium?: boolean;
+  isActive?: boolean;
+}
+
+export interface VideoRequest {
+  lessonId: number;
+  title: string;
+  order: number;
+  question: string;
+  optionA: string;
+  optionB: string;
+  optionC: string;
+  optionD: string;
+  answer: string; // A, B, C, or D
+  isActive?: boolean;
+}
+
 export interface LessonDTO {
   id: number;
   name: string;

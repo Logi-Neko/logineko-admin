@@ -1,4 +1,4 @@
-import type { ApiResponse, AdminStatDTO, TokenExchangeResponse, LoginRequest, AccountDTO, CourseDTO, LessonDTO, VideoDTO } from '../types';
+import type { ApiResponse, AdminStatDTO, TokenExchangeResponse, LoginRequest, AccountDTO, CourseDTO, LessonDTO, VideoDTO, CourseRequest, LessonRequest, VideoRequest } from '../types';
 
 const API_BASE_URL = 'http://localhost:8081';
 
@@ -54,7 +54,8 @@ class ApiService {
       const response = await fetch(url, {
         ...options,
         headers: {
-          'Content-Type': 'application/json',
+          // Only add Content-Type if not FormData (for file uploads)
+          ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
           ...options.headers,
         },
       });
@@ -121,6 +122,129 @@ class ApiService {
 
   async getVideosByLessonId(lessonId: number): Promise<ApiResponse<VideoDTO[]>> {
     return this.requestPublic<VideoDTO[]>(`/videos?lessonId=${lessonId}`);
+  }
+
+  async createCourse(courseRequest: CourseRequest, thumbnail: File): Promise<ApiResponse<CourseDTO>> {
+    const formData = new FormData();
+    
+    // Add course request as JSON blob
+    formData.append('request', new Blob([JSON.stringify(courseRequest)], {
+      type: 'application/json'
+    }));
+    
+    // Add thumbnail file
+    formData.append('thumbnail', thumbnail);
+
+    return this.requestPublic<CourseDTO>('/courses', {
+      method: 'POST',
+      body: formData,
+      headers: {} // Don't set Content-Type, let browser set it for FormData
+    });
+  }
+
+  async updateCourse(courseId: number, courseRequest: CourseRequest, thumbnail?: File): Promise<ApiResponse<CourseDTO>> {
+    const formData = new FormData();
+    
+    // Add course request as JSON blob
+    formData.append('request', new Blob([JSON.stringify(courseRequest)], {
+      type: 'application/json'
+    }));
+    
+    // Add thumbnail file if provided
+    if (thumbnail) {
+      formData.append('thumbnail', thumbnail);
+    }
+
+    return this.requestPublic<CourseDTO>(`/courses/${courseId}`, {
+      method: 'PATCH',
+      body: formData,
+      headers: {} // Don't set Content-Type, let browser set it for FormData
+    });
+  }
+
+  async createLesson(lessonRequest: LessonRequest, thumbnail: File): Promise<ApiResponse<LessonDTO>> {
+    const formData = new FormData();
+    
+    // Add lesson request as JSON blob
+    formData.append('request', new Blob([JSON.stringify(lessonRequest)], {
+      type: 'application/json'
+    }));
+    
+    // Add thumbnail file
+    formData.append('thumbnail', thumbnail);
+
+    return this.requestPublic<LessonDTO>('/lessons', {
+      method: 'POST',
+      body: formData,
+      headers: {} // Don't set Content-Type, let browser set it for FormData
+    });
+  }
+
+  async updateLesson(lessonId: number, lessonRequest: LessonRequest, thumbnail?: File | null): Promise<ApiResponse<LessonDTO>> {
+    const formData = new FormData();
+    
+    // Add lesson request as JSON blob
+    formData.append('request', new Blob([JSON.stringify(lessonRequest)], {
+      type: 'application/json'
+    }));
+    
+    // Add thumbnail file if provided
+    if (thumbnail) {
+      formData.append('thumbnail', thumbnail);
+    }
+
+    return this.requestPublic<LessonDTO>(`/lessons/${lessonId}`, {
+      method: 'PATCH',
+      body: formData,
+      headers: {} // Don't set Content-Type, let browser set it for FormData
+    });
+  }
+
+  // Video API methods
+  async createVideo(videoRequest: VideoRequest, thumbnail: File, video: File): Promise<ApiResponse<VideoDTO>> {
+    const formData = new FormData();
+    
+    // Add video request data
+    formData.append('request', new Blob([JSON.stringify(videoRequest)], {
+      type: 'application/json'
+    }));
+    
+    // Add thumbnail file
+    formData.append('thumbnail', thumbnail);
+    
+    // Add video file
+    formData.append('video', video);
+
+    return this.requestPublic<VideoDTO>('/videos', {
+      method: 'POST',
+      body: formData,
+      headers: {} // Don't set Content-Type, let browser set it for FormData
+    });
+  }
+
+  async updateVideo(videoId: number, videoRequest: VideoRequest, thumbnail?: File | null, video?: File | null): Promise<ApiResponse<VideoDTO>> {
+    const formData = new FormData();
+    
+    // Add video request data
+    formData.append('request', new Blob([JSON.stringify(videoRequest)], {
+      type: 'application/json'
+    }));
+    
+    // Add thumbnail file if provided
+    if (thumbnail) {
+      formData.append('thumbnail', thumbnail);
+    }
+    
+    // Add video file if provided
+    if (video) {
+      formData.append('video', video);
+    }
+
+    return this.requestPublic<VideoDTO>(`/videos/${videoId}`, {
+      method: 'PATCH',
+      body: formData,
+      headers: {} // Don't set Content-Type, let browser set it for FormData
+    });
   }
 }
 

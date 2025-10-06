@@ -119,7 +119,7 @@ const MainLayout: React.FC = () => {
         collapsible
         collapsed={collapsed}
         theme="light"
-        width={280}
+        width={180}
         className="!bg-blue-600"
       >
         {/* Logo Section */}
