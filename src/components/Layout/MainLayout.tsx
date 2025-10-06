@@ -9,6 +9,7 @@ import {
   MenuUnfoldOutlined,
   QuestionCircleOutlined,
   BarChartOutlined,
+  BookOutlined,
   SettingOutlined,
   LogoutOutlined,
   UserSwitchOutlined,
@@ -64,8 +65,8 @@ const MainLayout: React.FC = () => {
           label: 'Gói Premium',
         },
         {
-          key: '/mon-hoc',
-          icon: <BarChartOutlined />,
+          key: '/courses',
+          icon: <BookOutlined />,
           label: 'Môn Học',
         },
         {
