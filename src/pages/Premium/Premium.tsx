@@ -197,9 +197,9 @@ const Premium: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex justify-center">
       <div className="container mx-auto px-6 py-8">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center !mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Quản lý gói Premium</h1>
             <p className="text-gray-600">Quản lý và cấu hình các gói premium cho ứng dụng học tập</p>

@@ -160,7 +160,7 @@ const Dashboard: React.FC = () => {
         <Col xs={24} sm={12} lg={6}>
           <StatCard
             title="Tổng Doanh Thu"
-            value={`${(adminStats.totalRevenueInYear / 1000000000).toFixed(1)}B`}
+            value={`${(adminStats.totalRevenueInYear / 1000000).toFixed(1)}M VNĐ`}
             icon={<DollarOutlined />}
             color="#faad14"
           />
@@ -187,7 +187,7 @@ const Dashboard: React.FC = () => {
                   <div className="text-center">
                     <p className="m-0 text-gray-500 text-sm">TỔNG DOANH THU {adminStats.year}</p>
                     <h3 className="my-1 text-blue-500 text-lg font-semibold">
-                      {(adminStats.totalRevenueInYear / 1000000000).toFixed(1)}B VNĐ
+                      {(adminStats.totalRevenueInYear / 1000000).toFixed(1)}M VNĐ
                     </h3>
                     <p className="m-0 text-xs text-gray-500">Tổng doanh thu năm</p>
                   </div>

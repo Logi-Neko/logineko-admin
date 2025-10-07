@@ -144,11 +144,7 @@ const MainLayout: React.FC = () => {
             selectedKeys={[location.pathname]}
             items={menuItems as any}
             onClick={({ key }) => navigate(key)}
-            className="!bg-transparent !border-0"
-            style={{
-              backgroundColor: 'transparent',
-              color: 'white',
-            }}
+            className="!bg-transparent !border-0 !text-white"
           />
         </div>
       </Sider>
