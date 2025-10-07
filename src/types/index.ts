@@ -189,3 +189,14 @@ export interface VideoDTO {
   updatedAt: string; // LocalDateTime as ISO string
   videoQuestion: VideoQuestionDTO;
 }
+
+export interface SubscriptionPrice {
+  id: number;
+  price: number;
+  duration: number;
+}
+
+export interface SubscriptionPriceRequest {
+  price: number;
+  duration: number;
+}
