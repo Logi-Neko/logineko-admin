@@ -1,4 +1,4 @@
-import type { ApiResponse, AdminStatDTO, TokenExchangeResponse, LoginRequest, AccountDTO, CourseDTO, LessonDTO, VideoDTO, CourseRequest, LessonRequest, VideoRequest } from '../types';
+import type { ApiResponse, AdminStatDTO, TokenExchangeResponse, LoginRequest, AccountDTO, CourseDTO, LessonDTO, VideoDTO, CourseRequest, LessonRequest, VideoRequest, SubscriptionPrice, SubscriptionPriceRequest } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -139,6 +139,32 @@ class ApiService {
       method: 'POST',
       body: formData,
       headers: {} // Don't set Content-Type, let browser set it for FormData
+    });
+  }
+
+  // Subscription Price APIs
+  async getSubscriptionPrices(): Promise<ApiResponse<SubscriptionPrice[]>> {
+    return this.request<SubscriptionPrice[]>('/api/subscription_prices');
+  }
+
+  async createSubscriptionPrice(request: SubscriptionPriceRequest): Promise<ApiResponse<SubscriptionPrice>> {
+    return this.request<SubscriptionPrice>(`/api/subscription_prices?price=${request.price}&duration=${request.duration}`, {
+      method: 'POST',
+      headers: {} // Don't set Content-Type, let browser set it for FormData
+    });
+  }
+
+  async updateSubscriptionPrice(id: number, request: SubscriptionPriceRequest): Promise<ApiResponse<SubscriptionPrice>> {
+
+    return this.request<SubscriptionPrice>(`/api/subscription_prices/${id}?price=${request.price}&duration=${request.duration}`, {
+      method: 'PATCH',
+      headers: {} // Don't set Content-Type, let browser set it for FormData
+    });
+  }
+
+  async deleteSubscriptionPrice(id: number): Promise<ApiResponse<any>> {
+    return this.request<any>(`/api/subscription_prices/${id}`, {
+      method: 'DELETE'
     });
   }
 
