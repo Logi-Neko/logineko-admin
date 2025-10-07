@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Table, Input, Button, Tag, Space, Spin, message, Collapse, Typography, Avatar, Rate, Badge, Modal, Form, InputNumber, Switch, Upload } from 'antd';
-import { SearchOutlined, BookOutlined, PlayCircleOutlined, StarOutlined, ClockCircleOutlined, UserOutlined, EyeOutlined, PlusOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
+import { BookOutlined, ClockCircleOutlined, EditOutlined, EyeOutlined, PlayCircleOutlined, PlusOutlined, SearchOutlined, StarOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
+import { Avatar, Button, Card, Collapse, Form, Input, InputNumber, Modal, Rate, Space, Spin, Switch, Table, Tag, Typography, Upload, message } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { apiService } from '../../services/api';
-import type { CourseDTO, LessonDTO, VideoDTO, CourseRequest, LessonRequest, VideoRequest } from '../../types';
+import type { CourseDTO, CourseRequest, LessonDTO, LessonRequest, VideoDTO, VideoRequest } from '../../types';
 
 const { Search } = Input;
 const { Panel } = Collapse;
@@ -239,7 +239,7 @@ const Courses: React.FC = () => {
           )}
         </div>
         
-        {lessonData.videos.map((video, index) => (
+        {lessonData.videos.map((video, _) => (
           <Card
             key={video.id}
             size="small"
@@ -668,7 +668,7 @@ const Courses: React.FC = () => {
       dataIndex: 'thumbnailUrl',
       key: 'thumbnailUrl',
       width: 100,
-      render: (thumbnailUrl: string, record: CourseDTO) => (
+      render: (thumbnailUrl: string, _: CourseDTO) => (
         <Avatar
           shape="square"
           size={64}

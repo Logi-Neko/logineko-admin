@@ -1,6 +1,6 @@
 import type { ApiResponse, AdminStatDTO, TokenExchangeResponse, LoginRequest, AccountDTO, CourseDTO, LessonDTO, VideoDTO, CourseRequest, LessonRequest, VideoRequest } from '../types';
 
-const API_BASE_URL = 'http://localhost:8081';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 class ApiService {
   private getAuthHeaders(): Record<string, string> {
