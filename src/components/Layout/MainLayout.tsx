@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Avatar, Badge, Dropdown, message } from 'antd';
+import { Layout, Menu, Avatar, Dropdown, message } from 'antd';
 import {
   DashboardOutlined,
   UserOutlined,
@@ -8,7 +8,6 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   QuestionCircleOutlined,
-  BarChartOutlined,
   BookOutlined,
   SettingOutlined,
   LogoutOutlined,
