@@ -14,7 +14,7 @@ import { apiService } from '../../services/api';
 const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [adminStats, setAdminStats] = useState<AdminStatDTO | null>(null);
-  const [selectedYear, setSelectedYear] = useState(2025);
+  const [selectedYear, _] = useState(2025);
 
   useEffect(() => {
     fetchAdminStats();

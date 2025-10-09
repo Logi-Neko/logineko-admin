@@ -9,7 +9,7 @@ const { Panel } = Collapse;
 const { Title, Text, Paragraph } = Typography;
 
 const Courses: React.FC = () => {
-  const [searchText, setSearchText] = useState('');
+  const [_, setSearchText] = useState('');
   const [courses, setCourses] = useState<CourseDTO[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<CourseDTO[]>([]);
   const [loading, setLoading] = useState(true);

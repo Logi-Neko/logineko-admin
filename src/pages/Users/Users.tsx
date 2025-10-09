@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Table, Input, Button, Tag, Space, Spin, message } from 'antd';
-import { SearchOutlined, FileExcelOutlined, UserAddOutlined } from '@ant-design/icons';
+import { SearchOutlined } from '@ant-design/icons';
+import { Card, Input, Spin, Table, Tag, message } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { apiService } from '../../services/api';
 import type { AccountDTO } from '../../types';
 
 const { Search } = Input;
 
 const Users: React.FC = () => {
-  const [searchText, setSearchText] = useState('');
+  const [_, setSearchText] = useState('');
   const [users, setUsers] = useState<AccountDTO[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<AccountDTO[]>([]);
   const [loading, setLoading] = useState(true);
