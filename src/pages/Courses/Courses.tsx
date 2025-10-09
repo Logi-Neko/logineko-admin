@@ -9,7 +9,7 @@ const { Panel } = Collapse;
 const { Title, Text, Paragraph } = Typography;
 
 const Courses: React.FC = () => {
-  const [searchText, setSearchText] = useState('');
+  const [_, setSearchText] = useState('');
   const [courses, setCourses] = useState<CourseDTO[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<CourseDTO[]>([]);
   const [loading, setLoading] = useState(true);
@@ -275,15 +275,70 @@ const Courses: React.FC = () => {
 
               {video.videoUrl ? (
                 <div style={{ marginBottom: 8 }}>
-                  <video
-                    width="300"
-                    height="200"
-                    controls
-                    style={{ borderRadius: 8, border: '1px solid #d9d9d9' }}
-                  >
-                    <source src={video.videoUrl} type="video/mp4" />
-                    Trình duyệt của bạn không hỗ trợ video HTML5.
-                  </video>
+                  {(() => {
+                    const fileExtension = video.videoUrl.toLowerCase().split('.').pop();
+                    const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension || '');
+                    const isVideo = ['mp4', 'webm', 'ogg', 'avi', 'mov'].includes(fileExtension || '');
+
+                    if (isImage) {
+                      return (
+                        <img
+                          key={`image-${video.id}`}
+                          src={video.videoUrl}
+                          alt={video.title}
+                          style={{ 
+                            width: '300px', 
+                            height: '200px', 
+                            objectFit: 'cover',
+                            borderRadius: 8, 
+                            border: '1px solid #d9d9d9' 
+                          }}
+                          onError={(e) => {
+                            console.error('Image load error:', e);
+                            message.error(`Không thể tải hình ảnh: ${video.title}`);
+                          }}
+                        />
+                      );
+                    } else if (isVideo) {
+                      return (
+                        <video
+                          key={`video-${video.id}`}
+                          width="300"
+                          height="200"
+                          controls
+                          preload="metadata"
+                          style={{ borderRadius: 8, border: '1px solid #d9d9d9' }}
+                          onError={(e) => {
+                            console.error('Video load error:', e);
+                            message.error(`Không thể tải video: ${video.title}`);
+                          }}
+                          onLoadStart={() => {
+                            console.log('Video loading started:', video.title);
+                          }}
+                        >
+                          <source src={video.videoUrl} type="video/mp4" />
+                          Trình duyệt của bạn không hỗ trợ video HTML5.
+                        </video>
+                      );
+                    } else {
+                      return (
+                        <div 
+                          style={{ 
+                            width: '300px', 
+                            height: '200px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center',
+                            backgroundColor: '#f5f5f5',
+                            borderRadius: 8, 
+                            border: '1px solid #d9d9d9' 
+                          }}
+                        >
+                          <Text type="secondary">Định dạng file không được hỗ trợ</Text>
+                        </div>
+                      );
+                    }
+                  })()}
                 </div>
               ) : video.thumbnailUrl && (
                 <Avatar

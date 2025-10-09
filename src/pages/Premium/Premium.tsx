@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Progress, Row, Col, message, Modal, Form, InputNumber, Popconfirm, Space } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Card, Form, InputNumber, message, Modal, Popconfirm, Progress, Spin } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { apiService } from '../../services/api';
 import type { SubscriptionPrice, SubscriptionPriceRequest } from '../../types';
 
@@ -13,7 +13,6 @@ interface PremiumPackageDisplay extends SubscriptionPrice {
 }
 
 const Premium: React.FC = () => {
-  const [subscriptionPrices, setSubscriptionPrices] = useState<SubscriptionPrice[]>([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingPrice, setEditingPrice] = useState<SubscriptionPrice | null>(null);
@@ -27,7 +26,6 @@ const Premium: React.FC = () => {
       ['Tất cả tính năng tiêu chuẩn', 'Khóa học VIP', 'Gia sư 1-1', 'Báo cáo tiến độ chi tiết'],
       ['Tất cả tính năng cao cấp', 'Khóa học độc quyền', 'Ưu tiên hỗ trợ', 'Tính năng AI cá nhân hóa']
     ];
-    const colors = ['#ff85c0', '#40a9ff', '#9254de', '#597ef7'];
     
     return prices.map((price, index) => ({
       ...price,
@@ -50,7 +48,6 @@ const Premium: React.FC = () => {
       setLoading(true);
       const response = await apiService.getSubscriptionPrices();
       if (response.status === 200 && response.data) {
-        setSubscriptionPrices(response.data);
         setDisplayPackages(generateDisplayPackages(response.data));
       } else {
         message.error('Không thể tải danh sách gói premium');
@@ -216,9 +213,15 @@ const Premium: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-          {displayPackages.map((pkg) => (
-            <PackageCard key={pkg.id} package={pkg} />
-          ))}
+          {loading ? (
+            <div className="col-span-full flex justify-center items-center py-20">
+              <Spin size="large" />
+            </div>
+          ) : (
+            displayPackages.map((pkg) => (
+              <PackageCard key={pkg.id} package={pkg} />
+            ))
+          )}
         </div>
       </div>
 
