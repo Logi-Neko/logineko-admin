@@ -821,35 +821,10 @@ const Dashboard: React.FC = () => {
                   data={activeUsersMetrics.dailyActivities.map(item => ({
                     date: new Date(item.date).toLocaleDateString('vi-VN', { month: 'short', day: 'numeric' }),
                     value: item.activeUsers,
-                    type: 'Người dùng hoạt động'
                   }))}
                   xField="date"
                   yField="value"
-                  seriesField="type"
-                  smooth={true}
-                  areaStyle={{
-                    fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff',
-                  }}
-                  line={{
-                    color: '#1890ff',
-                    size: 3,
-                  }}
-                  point={{
-                    size: 4,
-                    shape: 'circle',
-                    style: {
-                      fill: 'white',
-                      stroke: '#1890ff',
-                      lineWidth: 2,
-                    },
-                  }}
                   height={300}
-                  xAxis={{
-                    label: {
-                      autoRotate: true,
-                      autoHide: true,
-                    }
-                  }}
                 />
               </div>
 
@@ -872,22 +847,7 @@ const Dashboard: React.FC = () => {
                   xField="date"
                   yField="value"
                   seriesField="type"
-                  smooth={true}
-                  color={['#1890ff', '#52c41a']}
-                  point={{
-                    size: 3,
-                    shape: 'circle',
-                  }}
-                  legend={{
-                    position: 'top',
-                  }}
                   height={300}
-                  xAxis={{
-                    label: {
-                      autoRotate: true,
-                      autoHide: true,
-                    }
-                  }}
                 />
               </div>
             </Card>
