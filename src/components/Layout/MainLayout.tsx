@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Avatar, Dropdown, message } from 'antd';
+import { Layout, Menu, Avatar, Dropdown, message, Badge, Breadcrumb } from 'antd';
 import {
   DashboardOutlined,
   UserOutlined,
@@ -12,6 +12,7 @@ import {
   SettingOutlined,
   LogoutOutlined,
   UserSwitchOutlined,
+  HomeOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -33,6 +34,24 @@ const MainLayout: React.FC = () => {
       // Handle profile navigation
       message.info('Chức năng đang phát triển');
     }
+  };
+
+  // Generate breadcrumbs based on current path
+  const getBreadcrumbs = () => {
+    const pathMap: Record<string, string> = {
+      '/dashboard': 'Dashboard',
+      '/users': 'Người Dùng',
+      '/premium': 'Gói Premium',
+      '/courses': 'Môn Học',
+      '/cau-hoi': 'Câu Hỏi',
+      '/thong-bao': 'Thông Báo',
+      '/cai-dat': 'Cài Đặt',
+    };
+
+    return [
+      { title: <HomeOutlined />, path: '/dashboard' },
+      ...(pathMap[location.pathname] ? [{ title: pathMap[location.pathname] }] : [])
+    ];
   };
 
   const menuItems = [
@@ -117,65 +136,121 @@ const MainLayout: React.FC = () => {
         trigger={null}
         collapsible
         collapsed={collapsed}
+        collapsedWidth={80}
         theme="light"
-        width={180}
-        className="!bg-blue-600"
+        width={240}
+        className="!shadow-xl !fixed !left-0 !top-0 !bottom-0 !z-10"
+        style={{
+          background: 'linear-gradient(180deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%)',
+          overflow: 'auto'
+        }}
       >
-        {/* Logo Section */}
-        <div className="h-16 flex items-center justify-center px-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-white rounded flex items-center justify-center mr-3">
-              <span className="text-blue-600 font-bold text-sm">L</span>
+        {/* Logo Section with Animation */}
+        <div className="h-16 flex items-center justify-center px-4 border-b border-blue-700 border-opacity-30 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-lg hover-scale">
+              <span className="text-blue-600 font-bold text-lg">L</span>
             </div>
             {!collapsed && (
-              <div>
-                <div className="text-white font-bold text-lg">LOGINEKO</div>
-                <div className="text-blue-200 text-xs">ADMIN PANEL</div>
+              <div className="animate-slide-in-left">
+                <div className="text-white font-bold text-lg tracking-wide">LOGINEKO</div>
+                <div className="text-blue-300 text-xs font-medium">ADMIN PANEL</div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Menu Section */}
-        <div className="px-4 py-2">
+        {/* Menu Section with Custom Styling */}
+        <div className="px-3 py-4">
           <Menu
             theme="dark"
             mode="inline"
             selectedKeys={[location.pathname]}
             items={menuItems as any}
             onClick={({ key }) => navigate(key)}
-            className="!bg-transparent !border-0 !text-white"
+            className="!bg-transparent !border-0"
+            style={{
+              color: '#fff',
+            }}
           />
         </div>
+
+        {/* Footer Section */}
+        {!collapsed && (
+          <div className="absolute bottom-4 left-0 right-0 px-4 animate-fade-in">
+            <div className="bg-blue-800 bg-opacity-40 rounded-lg p-3 backdrop-blur-sm">
+              <p className="text-blue-200 text-xs text-center m-0">
+                Version 1.0.0
+              </p>
+              <p className="text-blue-300 text-xs text-center m-0 mt-1">
+                © 2025 Logineko
+              </p>
+            </div>
+          </div>
+        )}
       </Sider>
 
-      <Layout>
-        <Header className="!px-6 !bg-white !flex !items-center !justify-between !border-b !border-gray-200 !h-16">
+      <Layout
+        style={{
+          marginLeft: collapsed ? '80px' : '240px',
+          transition: 'margin-left 0.3s ease'
+        }}
+      >
+        <Header className="!px-6 !bg-white !flex !items-center !justify-between !shadow-md !h-16 !sticky !top-0 !z-[9] animate-fade-in">
           <div className="flex items-center gap-6">
             <div>
               {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                className: 'text-lg cursor-pointer text-gray-600 hover:text-blue-600',
+                className: 'text-xl cursor-pointer text-gray-700 hover:text-blue-600 hover-scale',
                 onClick: () => setCollapsed(!collapsed)
               })}
             </div>
-            <div>
-              <h1 className="m-0 text-xl font-bold text-gray-800">Admin Dashboard</h1>
-              <p className="m-0 text-gray-500 text-sm">Chào mừng quay trở lại Admin</p>
+            <div className="hidden md:block">
+              <Breadcrumb
+                items={getBreadcrumbs()}
+                className="text-sm"
+              />
             </div>
           </div>
-          <Dropdown menu={{ items: userMenuItems as any, onClick: handleMenuClick }} placement="bottomRight">
-            <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-3 py-2 rounded-lg">
-              <Avatar className="bg-blue-500" size={32}>A</Avatar>
-              <div>
-                <div className="text-sm font-medium text-gray-800">Admin User</div>
-                <div className="text-xs text-gray-500">Quản trị viên</div>
+
+          <div className="flex items-center gap-4">
+            {/* Notifications */}
+            <Badge count={5} className="cursor-pointer">
+              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-blue-50 transition-all hover-scale">
+                <BellOutlined className="text-gray-600 text-lg" />
               </div>
-            </div>
-          </Dropdown>
+            </Badge>
+
+            {/* User Menu */}
+            <Dropdown
+              menu={{ items: userMenuItems as any, onClick: handleMenuClick }}
+              placement="bottomRight"
+              arrow
+            >
+              <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 px-4 py-2 rounded-xl transition-all shadow-sm hover:shadow-md">
+                <Avatar className="bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg" size={36}>
+                  A
+                </Avatar>
+                <div className="hidden lg:block">
+                  <div className="text-sm font-semibold text-gray-800">Admin User</div>
+                  <div className="text-xs text-gray-500">Quản trị viên</div>
+                </div>
+              </div>
+            </Dropdown>
+          </div>
         </Header>
-        <Content className="m-0 p-6 bg-gray-50">
-          <Outlet />
+
+        <Content className="m-6 animate-fade-in">
+          <div className="min-h-[calc(100vh-120px)]">
+            <Outlet />
+          </div>
         </Content>
+
+        {/* Footer */}
+        <div className="bg-white border-t border-gray-200 py-4 px-6 text-center">
+          <p className="text-gray-500 text-sm m-0">
+            Made with ❤️ by Logineko Team • © 2025 All Rights Reserved
+          </p>
+        </div>
       </Layout>
     </Layout>
   );

@@ -200,3 +200,92 @@ export interface SubscriptionPriceRequest {
   price: number;
   duration: number;
 }
+
+// Subscription Status Breakdown Types
+export interface SubscriptionStatusDTO {
+  totalSubscriptions: number;
+  activeSubscriptions: number;
+  inactiveSubscriptions: number;
+  expiredSubscriptions: number;
+  activePercentage: number;
+  inactivePercentage: number;
+  expiredPercentage: number;
+}
+
+// Churn Rate Types
+export interface ChurnRateDTO {
+  year: number;
+  month: number;
+  subscriptionsAtStart: number;
+  newSubscriptions: number;
+  canceledSubscriptions: number;
+  expiredSubscriptions: number;
+  subscriptionsAtEnd: number;
+  churnRate: number;
+  retentionRate: number;
+  growthRate: number;
+}
+
+// Course Performance Types
+export interface CoursePerformanceDTO {
+  courseId: number;
+  courseName: string;
+  description: string;
+  thumbnailUrl: string;
+  isPremium: boolean;
+  totalLessons: number;
+  totalVideos: number;
+  totalQuestions: number;
+  uniqueStudents: number;
+  totalAttempts: number;
+  averageScore: number;
+  completionRate: number;
+  price: number;
+}
+
+export interface PopularCoursesDTO {
+  popularCourses: CoursePerformanceDTO[];
+  totalCourses: number;
+  totalPremiumCourses: number;
+  totalFreeCourses: number;
+  activeCourses: number;
+  averageStudentsPerCourse: number;
+}
+
+// Revenue By Type Types
+export interface RevenueByTypeItemDTO {
+  subscriptionType: string;
+  count: number;
+  revenue: number;
+  percentage: number;
+  averagePrice: number;
+}
+
+export interface RevenueByTypeDTO {
+  year: number;
+  totalRevenue: number;
+  revenueByType: RevenueByTypeItemDTO[];
+  mostProfitableType: string;
+  mostPopularType: string;
+}
+
+// Active Users Metrics Types
+export interface DailyActivityDTO {
+  date: string;
+  activeUsers: number;
+  totalAttempts: number;
+  totalQuestions: number;
+}
+
+export interface ActiveUsersMetricsDTO {
+  from: string;
+  to: string;
+  totalActiveUsers: number;
+  totalPremiumActiveUsers: number;
+  totalFreeActiveUsers: number;
+  dailyActiveUsers: number;
+  weeklyActiveUsers: number;
+  monthlyActiveUsers: number;
+  averageAttemptsPerUser: number;
+  dailyActivities: DailyActivityDTO[];
+}

@@ -1,4 +1,4 @@
-import type { ApiResponse, AdminStatDTO, TokenExchangeResponse, LoginRequest, AccountDTO, CourseDTO, LessonDTO, VideoDTO, CourseRequest, LessonRequest, VideoRequest, SubscriptionPrice, SubscriptionPriceRequest } from '../types';
+import type { ApiResponse, AdminStatDTO, TokenExchangeResponse, LoginRequest, AccountDTO, CourseDTO, LessonDTO, VideoDTO, CourseRequest, LessonRequest, VideoRequest, SubscriptionPrice, SubscriptionPriceRequest, SubscriptionStatusDTO, ChurnRateDTO, PopularCoursesDTO, RevenueByTypeDTO, ActiveUsersMetricsDTO } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -89,9 +89,29 @@ class ApiService {
     return !!localStorage.getItem('access_token');
   }
 
-  // Existing methods
+  // Statistics methods
   async getAdminStatistics(year: number = 2025): Promise<ApiResponse<AdminStatDTO>> {
     return this.request<AdminStatDTO>(`/statistics/admin?year=${year}`);
+  }
+
+  async getSubscriptionStatus(): Promise<ApiResponse<SubscriptionStatusDTO>> {
+    return this.request<SubscriptionStatusDTO>('/statistics/admin/subscriptions/status');
+  }
+
+  async getChurnRate(year: number, month: number): Promise<ApiResponse<ChurnRateDTO>> {
+    return this.request<ChurnRateDTO>(`/statistics/admin/churn?year=${year}&month=${month}`);
+  }
+
+  async getPopularCourses(limit: number = 10): Promise<ApiResponse<PopularCoursesDTO>> {
+    return this.request<PopularCoursesDTO>(`/statistics/admin/courses/popular?limit=${limit}`);
+  }
+
+  async getRevenueByType(year: number = 2025): Promise<ApiResponse<RevenueByTypeDTO>> {
+    return this.request<RevenueByTypeDTO>(`/statistics/admin/revenue/by-type?year=${year}`);
+  }
+
+  async getActiveUsersMetrics(from: string, to: string): Promise<ApiResponse<ActiveUsersMetricsDTO>> {
+    return this.request<ActiveUsersMetricsDTO>(`/statistics/admin/users/activity?from=${from}&to=${to}`);
   }
 
   // User management methods
